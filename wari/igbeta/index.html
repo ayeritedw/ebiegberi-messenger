@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igbeta Wari | Ebiegberi Messenger</title>
+<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+body{background:#f1f5f9;color:#0f172a}
+header{background:#0a2342;color:#fff;padding:18px 16px;position:sticky;top:0;z-index:10}
+header b{font-size:20px;letter-spacing:1px}
+header span{color:#f97316}
+header p{font-size:13px;opacity:.8;margin-top:2px}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.back{color:#0a2342;text-decoration:none;font-weight:700;font-size:14px}
+.hero{background:#0a2342;color:#fff;border-radius:20px;padding:22px;margin:14px 0}
+.hero .pill{display:inline-block;background:#f97316;color:#fff;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:800}
+.hero h1{font-size:34px;margin:12px 0 6px}
+.hero p{opacity:.85;line-height:1.5}
+.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card h3{font-size:16px;margin-bottom:8px}
+.card p{font-size:14px;line-height:1.6;color:#334155}
+.badge{display:inline-block;background:#e0f2fe;color:#0369a1;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-top:8px}
+label{font-size:13px;font-weight:700;display:block;margin:12px 0 5px}
+input,select{width:100%;padding:13px;border:1.5px solid #cbd5e1;border-radius:12px;font-size:15px}
+.btn{width:100%;padding:15px;border:0;border-radius:12px;background:#25D366;color:#fff;font-size:16px;font-weight:800;margin-top:16px;cursor:pointer}
+.btn2{width:100%;padding:13px;border:0;border-radius:12px;background:#0a2342;color:#fff;font-size:15px;font-weight:700;margin-top:10px;cursor:pointer}
+.msg{border-left:4px solid #f97316;padding-left:12px;margin:10px 0}
+.msg b{font-size:14px}
+.msg p{font-size:14px;color:#475569;margin-top:4px}
+.msgbox{display:flex;gap:8px;margin-top:12px}
+.msgbox input{flex:1}
+.msgbox button{background:#0a2342;color:#fff;border:0;padding:0 18px;border-radius:12px;font-weight:700}
+.footer{text-align:center;font-size:12px;color:#64748b;padding:20px}
+</style>
+</head>
+<body>
+<header><b>EBIEGBERI <span>MESSENGER</span></b><p>One Wari, One Voice • Nembe Kingdom</p></header>
+<div class="wrap">
+<a class="back" href="/wari/">← Back to All Wari</a>
+<div class="hero">
+<span class="pill">WARI #1 — PILOT WARI LIVE • HOUSE #1</span>
+<h1>Igbeta Wari</h1>
+<p>Pilot Wari to go live on Ebiegberi Messenger. First Wari. One Wari, One Voice.</p>
+</div>
+
+<div class="card">
+<h3>📢 Announcements</h3>
+<div class="msg"><b>Head Chief — Igbeta Wari</b><p>Welcome to our own Igbeta Wari home. This is our private place. What we discuss here stays here. Only approved members can enter.</p></div>
+<div class="msg"><b>Ebiegberi Messenger</b><p>Igbeta is Wari #1 Live. Pilot Wari. Together we are building the Kingdom, Wari by Wari.</p></div>
+</div>
+
+<div class="card">
+<h3>💬 Igbeta Wari Chat</h3>
+<p>Chat is for approved members only. This is a demo chat — real chat opens after approval by Head Chief.</p>
+<div id="chat"></div>
+<div class="msgbox"><input id="chatInput" placeholder="Type a message..."><button onclick="sendMsg()">Send</button></div>
+</div>
+
+<div class="card">
+<h3>👑 Secretary Message</h3>
+<p>To join Igbeta Wari, fill the form below. Approval by Head Chief / Secretary only. No approval, no entry.</p>
+<span class="badge">Approval Only • Private Wari</span>
+</div>
+
+<div class="card">
+<h3>📝 Join Igbeta Wari — Request Approval</h3>
+<label>Your Full Name</label>
+<input id="name" placeholder="e.g. Diepiriye Wayne">
+<label>Phone / WhatsApp Number</label>
+<input id="phone" placeholder="e.g. 0803...">
+<label>Compound</label>
+<input id="compound" placeholder="Your compound in Igbeta">
+<label>Where Do You Live Now?</label>
+<select id="location">
+<option>Nembe City</option>
+<option>Bassambiri</option>
+<option>Port Harcourt</option>
+<option>Yenagoa</option>
+<option>Lagos</option>
+<option>Abuja</option>
+<option>Diaspora</option>
+</select>
+<button class="btn2" onclick="connectWallet()">Connect Phantom Wallet (Solana Devnet)</button>
+<p id="walletAddr" style="font-size:12px;text-align:center;margin-top:8px;color:#64748b"></p>
+<button class="btn" onclick="joinWA()">Send via WhatsApp →</button>
+<p style="font-size:12px;text-align:center;margin-top:10px;color:#64748b">Your request goes directly to the Igbeta Wari Secretary on WhatsApp.</p>
+<button class="btn2" onclick="location.href='/wari/'">View All 14 Wari</button>
+</div>
+
+<div class="footer">Igbeta Wari • Ebiegberi Messenger • A Devlog Technologies Product<br>ebiegberi.com/wari/igbeta</div>
+</div>
+
+<script>
+let msgs=[{n:"Head Chief",t:"Welcome to Igbeta Wari. Our home is now live."},{n:"Secretary",t:"Fill the Join Form below. We will approve you."}];
+function render(){document.getElementById('chat').innerHTML=msgs.map(m=>'<div class="msg"><b>'+m.n+'</b><p>'+m.t+'</p></div>').join('')}
+function sendMsg(){let v=document.getElementById('chatInput').value.trim();if(!v)return;msgs.push({n:"You",t:v});document.getElementById('chatInput').value='';render()}
+async function connectWallet(){
+  if(!window.solana || !window.solana.isPhantom){ alert('Install Phantom wallet'); return; }
+  const resp = await window.solana.connect();
+  document.getElementById('walletAddr').innerText = 'Connected: ' + resp.publicKey.toString().slice(0,8) + '... Devnet Membership Token ready';
+}
+function joinWA(){
+let n=document.getElementById('name').value.trim();
+let p=document.getElementById('phone').value.trim();
+let c=document.getElementById('compound').value.trim();
+let l=document.getElementById('location').value;
+if(!n||!p||!c){alert('Please fill Your Full Name, Phone and Compound first, then click WhatsApp again.');return;}
+let msg='Hello Igbeta Wari Secretary, I want to join Igbeta Wari on Ebiegberi Messenger.%0A%0AName: '+encodeURIComponent(n)+'%0APhone: '+encodeURIComponent(p)+'%0ACompound: '+encodeURIComponent(c)+'%0ALocation: '+encodeURIComponent(l);
+window.open('https://wa.me/2348033363838?text='+msg,'_blank')}
+render();
+</script>
+</body>
+</html>
