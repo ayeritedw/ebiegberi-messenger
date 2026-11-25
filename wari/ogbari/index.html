@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ogbari Wari | Ebiegberi Messenger</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+body{background:#f1f5f9;color:#0f172a}
+header{background:#0a2342;color:#fff;padding:14px 16px;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center}
+header b{font-size:18px;letter-spacing:1px} header b span{color:#f97316}
+header a{color:#fff;text-decoration:none;font-size:13px;background:#f97316;padding:7px 12px;border-radius:999px;font-weight:700}
+.hero{background:#0a2342;color:#fff;padding:22px 16px;text-align:center}
+.hero h1{font-size:28px} .hero p{opacity:.85;font-size:14px;margin-top:6px;line-height:1.5}
+.hero .badge{display:inline-block;background:#22c55e;color:#fff;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:800;margin-top:12px}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+.card{background:#fff;border-radius:16px;padding:16px;margin:10px 0;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card h3{font-size:16px;margin-bottom:10px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:12px;margin:6px 0;font-size:15px}
+button{width:100%;padding:13px;border:0;border-radius:12px;background:#0a2342;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+button.orange{background:#f97316} button.green{background:#22c55e}
+#messages{max-height:320px;overflow-y:auto}
+.msg{padding:10px 12px;background:#f8fafc;border-radius:12px;margin:6px 0}
+.msg b{font-size:13px;color:#0a2342} .msg p{font-size:14px;margin-top:2px} .msg small{color:#94a3b8;font-size:11px}
+.note{font-size:13px;color:#64748b;line-height:1.5}
+.footer{text-align:center;font-size:12px;color:#64748b;padding:20px}
+</style>
+</head>
+<body>
+<header><b>EBIEGBERI <span>MESSENGER</span></b><a href="/wari/">← All Wari</a></header>
+<div class="hero">
+<h1>Ogbari Wari</h1>
+<p>Wari #6 • One Wari, One Voice • Nembe Kingdom</p>
+<div class="badge">● LIVE</div>
+</div>
+<div class="wrap">
+<div class="card">
+<h3>🔗 Connect Phantom Wallet — Membership Token</h3>
+<p class="note">Connect your Phantom wallet to claim your Ogbari Membership Token on Solana Devnet. Only token holders can chat.</p>
+<button class="orange" onclick="connectWallet()" style="margin-top:10px" id="walletBtn">Connect Phantom Wallet</button>
+<p class="note" id="walletStatus" style="margin-top:8px"></p>
+</div>
+<div class="card">
+<h3>💬 Ogbari Wari Chat</h3>
+<div id="messages"><p class="note">Loading messages...</p></div>
+<input id="senderName" placeholder="Your Name (e.g. Diepiriye Wayne)">
+<input id="msgInput" placeholder="Type message...">
+<button onclick="sendMessage()">Send Message</button>
+</div>
+<div class="card">
+<h3>📢 Announcements</h3>
+<div id="announcements"><p class="note">No announcements yet.</p></div>
+</div>
+<div class="card">
+<h3>📝 Request to Join Ogbari Wari</h3>
+<input id="fullName" placeholder="Full Name *">
+<input id="phone" placeholder="Phone / WhatsApp *">
+<input id="compound" placeholder="Compound / Family (e.g. Ikata Compound)">
+<select id="location">
+<option value="">Where do you live? *</option>
+<option>Nembe City</option><option>Bassambiri</option>
+<option>Port Harcourt</option><option>Yenagoa</option>
+<option>Lagos</option><option>Abuja</option><option>Diaspora</option>
+</select>
+<button class="green" onclick="joinWari()">Submit Join Request</button>
+<p class="note" id="joinStatus" style="margin-top:8px">Secretary / Head Chief will approve. You will get WhatsApp confirmation.</p>
+</div>
+<div class="footer">Ebiegberi Messenger • A Devlog Technologies Product<br>ebiegberi.com/wari • One Wari, One Voice</div>
+</div>
+<script>
+const SUPABASE_URL="https://YOUR_PROJECT.supabase.co";
+const SUPABASE_KEY="YOUR_ANON_KEY";
+const WARI_ID="ikata";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+async function loadMessages(){
+  const {data}=await sb.from("messages").select("*").eq("wari_id",WARI_ID).order("created_at",{ascending:true}).limit(100);
+  const el=document.getElementById("messages");
+  if(!data||!data.length){el.innerHTML='<p class="note">No messages yet. Be the first to greet Ikata Wari.</p>';return;}
+  el.innerHTML=data.map(m=>`<div class="msg"><b>${m.sender_name||"Member"}</b><p>${m.message}</p><small>${new Date(m.created_at).toLocaleString()}</small></div>`).join("");
+  el.scrollTop=el.scrollHeight;
+}
+async function sendMessage(){
+  const name=document.getElementById("senderName").value.trim();
+  const msg=document.getElementById("msgInput").value.trim();
+  if(!name||!msg){alert("Enter your name and message");return;}
+  const {error}=await sb.from("messages").insert([{wari_id:WARI_ID,sender_name:name,message:msg}]);
+  if(error){alert("Error: "+error.message);return;}
+  document.getElementById("msgInput").value=""; loadMessages();
+}
+async function joinWari(){
+  const full_name=document.getElementById("fullName").value.trim();
+  const phone=document.getElementById("phone").value.trim();
+  const compound=document.getElementById("compound").value.trim();
+  const location=document.getElementById("location").value;
+  if(!full_name||!phone||!location){alert("Fill Full Name, Phone and Location");return;}
+  const {error}=await sb.from("join_requests").insert([{wari_id:WARI_ID,full_name,phone,compound,location,status:"pending"}]);
+  if(error){document.getElementById("joinStatus").innerText="Error: "+error.message;return;}
+  document.getElementById("joinStatus").innerText="✅ Request sent! Secretary will contact you on WhatsApp.";
+  window.open(`https://wa.me/2340000000000?text=${encodeURIComponent("Hello, I am "+full_name+" requesting to join Ikata Wari. Phone: "+phone+" Location: "+location)}`,"_blank");
+}
+async function connectWallet(){
+  try{
+    if(!window.solana||!window.solana.isPhantom){alert("Install Phantom Wallet");return;}
+    const resp=await window.solana.connect();
+    document.getElementById("walletStatus").innerText="✅ Connected: "+resp.publicKey.toString().slice(0,8)+"...";
+    document.getElementById("walletBtn").innerText="Wallet Connected ✅";
+  }catch(e){alert("Wallet connect cancelled");}
+}
+loadMessages();
+sb.channel("ikata-chat").on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"wari_id=eq.ikata"},()=>loadMessages()).subscribe();
+</script>
+</body>
+</html>
